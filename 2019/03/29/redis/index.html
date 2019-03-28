@@ -2,7 +2,7 @@
 Redis 集群模式一般采用一主两从,官方推荐使用Redis Sentinel作为Redis的高可用解决方案,Redis Sentinel与zookeeper工作原理类似,用来监控主从实例,保证高可用性
 
 
-使用时客户端连接Sentinel进行使用"><meta name="keywords" content="[&quot;java&quot;,&quot;后端&quot;]"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title><a href="/">xNie</a></h3><div class="description"><p>前后一起来</p></div></div></div><ul class="social-links"></ul><div class="footer"><span>主题由 </span><a href="https://www.caicai.me">CaiCai </a><span> 与 </span><a href="https://github.com/Ben02/hexo-theme-Anatole">Ben </a><span> 设计</span><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank"> 博客框架基于Hexo</a><br><a href="https://dev.tencent.com/" target="_blank"> 使用CODING持续集成</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>redis集群模式(Redis Sentinel)</a></h3></div><div class="post-content"><h1 id="Redis集群模式-Redis-Sentinel"><a href="#Redis集群模式-Redis-Sentinel" class="headerlink" title="Redis集群模式(Redis Sentinel)"></a>Redis集群模式(Redis Sentinel)</h1><blockquote>
+使用时客户端连接Sentinel进行使用"><meta name="keywords" content="[&quot;java&quot;,&quot;后端&quot;]"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title><a href="/">xNie</a></h3><div class="description"><p>前后一起来</p></div></div></div><ul class="social-links"></ul><div class="footer"><span>主题由 </span><a href="https://www.caicai.me">CaiCai </a><span> 与 </span><a href="https://github.com/Ben02/hexo-theme-Anatole">Ben </a><span> 设计</span><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank"> 博客框架基于Hexo</a><br><a href="https://dev.tencent.com/" target="_blank"> 使用CODING持续集成</a><script type="text/javascript" src="http://tajs.qq.com/stats?sId=66377481" charset="UTF-8"></script></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>redis集群模式(Redis Sentinel)</a></h3></div><div class="post-content"><h1 id="Redis集群模式-Redis-Sentinel"><a href="#Redis集群模式-Redis-Sentinel" class="headerlink" title="Redis集群模式(Redis Sentinel)"></a>Redis集群模式(Redis Sentinel)</h1><blockquote>
 <p>Redis 集群模式一般采用一主两从,官方推荐使用Redis Sentinel作为Redis的高可用解决方案,Redis Sentinel与zookeeper工作原理类似,用来监控主从实例,保证高可用性</p>
 </blockquote>
 <blockquote>
@@ -18,4 +18,123 @@ Redis 集群模式一般采用一主两从,官方推荐使用Redis Sentinel作�
 <p>Sentinel的配置信息放在<code>/usr/local/etc/redis/Sentinel.conf</code>下,使用挂载数据卷的方式映射出来</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir /tmp</span><br><span class="line"><span class="comment"># 自定义集群名，其中 127.0.0.1 为 redis-master 的 ip，6379 为 redis-master 的端口，2 为最小投票数（因为有 3 台 Sentinel 所以可以设置成 2）</span></span><br><span class="line">Sentinel monitor mymaster ip port 2  <span class="comment">#需要设置</span></span><br><span class="line">Sentinel down-after-milliseconds mymaster 30000</span><br><span class="line">Sentinel parallel-syncs mymaster 1</span><br><span class="line">Sentinel failover-timeout mymaster 180000</span><br><span class="line">Sentinel deny-scripts-reconfig yes</span><br></pre></td></tr></table></figure>
 <h4 id="Sentinel-API的查看"><a href="#Sentinel-API的查看" class="headerlink" title="Sentinel API的查看"></a>Sentinel API的查看</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it redis-Sentinel-1 /bin/bash</span><br><span class="line">redis-cli -p 26379</span><br><span class="line">Sentinel master mymaster</span><br><span class="line">Sentinel slaves mymaster</span><br></pre></td></tr></table></figure>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>新版的springboot-starter中的redis客户端使用了<code>lettuce</code>,替换了之前的<code>jedis</code></p>
+<h4 id="配置文件application-yml"><a href="#配置文件application-yml" class="headerlink" title="配置文件application.yml"></a>配置文件application.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    lettuce:</span></span><br><span class="line"><span class="attr">      pool:</span> <span class="comment">#采用连接池</span></span><br><span class="line"><span class="attr">        max-active:</span> <span class="number">8</span></span><br><span class="line"><span class="attr">        max-idle:</span> <span class="number">8</span></span><br><span class="line"><span class="attr">        max-wait:</span> <span class="bullet">-1</span><span class="string">ms</span></span><br><span class="line"><span class="attr">        min-idle:</span> <span class="number">0</span></span><br><span class="line"><span class="attr">    sentinel:</span></span><br><span class="line"><span class="attr">      master:</span> <span class="string">mymaster</span> <span class="comment">#之前配置的集群名字</span></span><br><span class="line"><span class="attr">      nodes:</span> <span class="attr">ip:port,ip:port</span> <span class="comment">#连接采用sentinel也需要填多个,多个sentinel也需要填多个</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8503</span></span><br></pre></td></tr></table></figure>
+<h4 id="基本接口-增-查-删"><a href="#基本接口-增-查-删" class="headerlink" title="基本接口(增,查,删)"></a>基本接口(增,查,删)</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RedisService</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置缓存</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, Object value)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置缓存</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, Object value, <span class="keyword">int</span> seconds)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取缓存</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Object <span class="title">get</span><span class="params">(String key)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除缓存</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(String key)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="接口实现"><a href="#接口实现" class="headerlink" title="接口实现"></a>接口实现</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisServiceImpl</span> <span class="keyword">implements</span> <span class="title">RedisService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate redisTemplate;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, Object value)</span> </span>&#123;</span><br><span class="line">        redisTemplate.opsForValue().set(key, value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(String key, Object value, <span class="keyword">int</span> seconds)</span> </span>&#123;</span><br><span class="line">        redisTemplate.opsForValue().set(key, value, seconds, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> redisTemplate.opsForValue().get(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        redisTemplate.delete(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Redis基本命令"><a href="#Redis基本命令" class="headerlink" title="Redis基本命令"></a>Redis基本命令</h3><h4 id="连接操作相关的命令"><a href="#连接操作相关的命令" class="headerlink" title="连接操作相关的命令"></a>连接操作相关的命令</h4><ul>
+<li>ping：测试连接是否存活如果正常会返回 pong</li>
+<li>echo：打印</li>
+<li>select：切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值</li>
+<li>quit：关闭连接（connection）</li>
+<li>auth：简单密码认证</li>
+</ul>
+<h4 id="服务端相关命令"><a href="#服务端相关命令" class="headerlink" title="服务端相关命令"></a>服务端相关命令</h4><ul>
+<li>time：返回当前服务器时间</li>
+<li>client list: 返回所有连接到服务器的客户端信息和统计数据 参见 <a href="http://redisdoc.com/server/client_list.html" target="_blank" rel="noopener">http://redisdoc.com/server/client_list.html</a></li>
+<li>client kill ip:port：关闭地址为 ip:port 的客户端</li>
+<li>save：将数据同步保存到磁盘</li>
+<li>bgsave：将数据异步保存到磁盘</li>
+<li>lastsave：返回上次成功将数据保存到磁盘的Unix时戳</li>
+<li>shundown：将数据同步保存到磁盘，然后关闭服务</li>
+<li>info：提供服务器的信息和统计</li>
+<li>config resetstat：重置 info 命令中的某些统计数据</li>
+<li>config get：获取配置文件信息</li>
+<li>config set：动态地调整 Redis 服务器的配置(configuration)而无须重启，可以修改的配置参数可以使用命令 CONFIG GET * 来列出</li>
+<li>config rewrite：Redis 服务器时所指定的 redis.conf 文件进行改写</li>
+<li>monitor：实时转储收到的请求</li>
+<li>slaveof：改变复制策略设置</li>
+</ul>
+<h4 id="发布订阅相关命令"><a href="#发布订阅相关命令" class="headerlink" title="发布订阅相关命令"></a>发布订阅相关命令</h4><ul>
+<li>psubscribe：订阅一个或多个符合给定模式的频道 例如 psubscribe news.<em> tweet.</em></li>
+<li>publish：将信息 message 发送到指定的频道 channel 例如 publish msg “good morning”</li>
+<li>pubsub channels：列出当前的活跃频道 例如 PUBSUB CHANNELS news.i*</li>
+<li>pubsub numsub：返回给定频道的订阅者数量 例如 PUBSUB NUMSUB news.it news.internet news.sport news.music</li>
+<li>pubsub numpat：返回客户端订阅的所有模式的数量总和</li>
+<li>punsubscribe：指示客户端退订所有给定模式。</li>
+<li>subscribe：订阅给定的一个或多个频道的信息。例如 subscribe msg chat_room</li>
+<li>unsubscribe：指示客户端退订给定的频道。</li>
+</ul>
+<h4 id="对-KEY-操作的命令"><a href="#对-KEY-操作的命令" class="headerlink" title="对 KEY 操作的命令"></a>对 KEY 操作的命令</h4><ul>
+<li>exists(key)：确认一个 key 是否存在</li>
+<li>del(key)：删除一个 key</li>
+<li>type(key)：返回值的类型</li>
+<li>keys(pattern)：返回满足给定 pattern 的所有 key</li>
+<li>randomkey：随机返回 key 空间的一个</li>
+<li>keyrename(oldname, newname)：重命名 key</li>
+<li>dbsize：返回当前数据库中 key 的数目</li>
+<li>expire：设定一个 key 的活动时间（s）</li>
+<li>ttl：获得一个 key 的活动时间</li>
+<li>move(key, dbindex)：移动当前数据库中的 key 到 dbindex 数据库</li>
+<li>flushdb：删除当前选择数据库中的所有 key</li>
+<li>flushall：删除所有数据库中的所有 key</li>
+</ul>
+<h4 id="对-String-操作的命令"><a href="#对-String-操作的命令" class="headerlink" title="对 String 操作的命令"></a>对 String 操作的命令</h4><ul>
+<li>set(key, value)：给数据库中名称为 key 的 string 赋予值 value</li>
+<li>get(key)：返回数据库中名称为 key 的 string 的 value</li>
+<li>getset(key, value)：给名称为 key 的 string 赋予上一次的 value</li>
+<li>mget(key1, key2,…, key N)：返回库中多个 string 的 value</li>
+<li>setnx(key, value)：添加 string，名称为 key，值为 value</li>
+<li>setex(key, time, value)：向库中添加 string，设定过期时间 time</li>
+<li>mset(key N, value N)：批量设置多个 string 的值</li>
+<li>msetnx(key N, value N)：如果所有名称为 key i 的 string 都不存在</li>
+<li>incr(key)：名称为 key 的 string 增 1 操作</li>
+<li>incrby(key, integer)：名称为 key 的 string 增加 integer</li>
+<li>decr(key)：名称为 key 的 string 减 1 操作</li>
+<li>decrby(key, integer)：名称为 key 的 string 减少 integer</li>
+<li>append(key, value)：名称为 key 的 string 的值附加 value</li>
+<li>substr(key, start, end)：返回名称为 key 的 string 的 value 的子串</li>
+</ul>
+<h4 id="对-List-操作的命令"><a href="#对-List-操作的命令" class="headerlink" title="对 List 操作的命令"></a>对 List 操作的命令</h4><ul>
+<li>rpush(key, value)：在名称为 key 的 list 尾添加一个值为 value 的元素</li>
+<li>lpush(key, value)：在名称为 key 的 list 头添加一个值为 value 的元素</li>
+<li>llen(key)：返回名称为 key 的 list 的长度</li>
+<li>lrange(key, start, end)：返回名称为 key 的 list 中 start 至 end 之间的元素</li>
+<li>ltrim(key, start, end)：截取名称为 key 的 list</li>
+<li>lindex(key, index)：返回名称为 key 的 list 中 index 位置的元素</li>
+<li>lset(key, index, value)：给名称为 key 的 list 中 index 位置的元素赋值</li>
+<li>lrem(key, count, value)：删除 count 个 key 的 list 中值为 value 的元素</li>
+<li>lpop(key)：返回并删除名称为 key 的 list 中的首元素</li>
+<li>rpop(key)：返回并删除名称为 key 的 list 中的尾元素</li>
+<li>blpop(key1, key2,… key N, timeout)：lpop 命令的 block 版本。</li>
+<li>brpop(key1, key2,… key N, timeout)：rpop 的 block 版本。</li>
+<li>rpoplpush(srckey, dstkey)：返回并删除名称为 srckey 的 list 的尾元素，并将该元素添加到名称为 dstkey 的 list 的头部</li>
+</ul>
+<h4 id="对-Set-操作的命令"><a href="#对-Set-操作的命令" class="headerlink" title="对 Set 操作的命令"></a>对 Set 操作的命令</h4><ul>
+<li>sadd(key, member)：向名称为 key 的 set 中添加元素 member</li>
+<li>srem(key, member) ：删除名称为 key 的 set 中的元素 member</li>
+<li>spop(key) ：随机返回并删除名称为 key 的 set 中一个元素</li>
+<li>smove(srckey, dstkey, member) ：移到集合元素</li>
+<li>scard(key) ：返回名称为 key 的 set 的基数</li>
+<li>sismember(key, member) ：member 是否是名称为 key 的 set 的元素</li>
+<li>sinter(key1, key2,…key N) ：求交集</li>
+<li>sinterstore(dstkey, (keys)) ：求交集并将交集保存到 dstkey 的集合</li>
+<li>sunion(key1, (keys)) ：求并集</li>
+<li>sunionstore(dstkey, (keys)) ：求并集并将并集保存到 dstkey 的集合</li>
+<li>sdiff(key1, (keys)) ：求差集</li>
+<li>sdiffstore(dstkey, (keys)) ：求差集并将差集保存到 dstkey 的集合</li>
+<li>smembers(key) ：返回名称为 key 的 set 的所有元素</li>
+<li>srandmember(key) ：随机返回名称为 key 的 set 的一个元素</li>
+</ul>
+<h4 id="对-Hash-操作的命令"><a href="#对-Hash-操作的命令" class="headerlink" title="对 Hash 操作的命令"></a>对 Hash 操作的命令</h4><ul>
+<li>hset(key, field, value)：向名称为 key 的 hash 中添加元素 field</li>
+<li>hget(key, field)：返回名称为 key 的 hash 中 field 对应的 value</li>
+<li>hmget(key, (fields))：返回名称为 key 的 hash 中 field i 对应的 value</li>
+<li>hmset(key, (fields))：向名称为 key 的 hash 中添加元素 field</li>
+<li>hincrby(key, field, integer)：将名称为 key 的 hash 中 field 的 value 增加 integer</li>
+<li>hexists(key, field)：名称为 key 的 hash 中是否存在键为 field 的域</li>
+<li>hdel(key, field)：删除名称为 key 的 hash 中键为 field 的域</li>
+<li>hlen(key)：返回名称为 key 的 hash 中元素个数</li>
+<li>hkeys(key)：返回名称为 key 的 hash 中所有键</li>
+<li>hvals(key)：返回名称为 key 的 hash 中所有键对应的 value</li>
+<li>hgetall(key)：返回名称为 key 的 hash 中所有的键（field）及其对应的 value</li>
+</ul>
+<h4 id="Redis-Sentinel"><a href="#Redis-Sentinel" class="headerlink" title="Redis Sentinel"></a>Redis Sentinel</h4><ul>
+<li>ping ：返回 pong</li>
+<li>sentinel masters ：列出所有被监视的主服务器，以及这些主服务器的当前状态。</li>
+<li>sentinel slaves：列出给定主服务器的所有从服务器，以及这些从服务器的当前状态。</li>
+<li>sentinel get-master-addr-by-name：返回给定名字的主服务器的 IP 地址和端口号。如果这个主服务器正在执行故障转移操作，或者针对这个主服务器的故障转移操作已经完成，那么这个命令返回新的主服务器的 IP 地址和端口号。</li>
+<li>sentinel reset：重置所有名字和给定模式 pattern 相匹配的主服务器。pattern 参数是一个 Glob 风格的模式 重置操作清楚主服务器目前的所有状态，包括正在执行中的故障转移，并移除目前已经发现和关联的，主服务器的所有从服务器和 Sentinel 。</li>
+<li>sentinel failover：当主服务器失效时，在不询问其他 Sentinel 意见的情况下，强制开始一次自动故障迁移（不过发起故障转移的 Sentinel 会向其他 Sentinel 发送一个新的配置，其他 Sentinel 会根据这个配置进行相应的更新）。</li>
+</ul>
 </div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2019-03-29</span><i class="fa fa-tag"></i><a class="tag" href="/tags/缓存/" title="缓存">缓存 </a><a class="tag" href="/tags/docker/" title="docker">docker </a><a class="tag" href="/tags/redis/" title="redis">redis </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.ixnie.cn/2019/03/29/redis/,xNie,redis集群模式(Redis Sentinel),;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2019/03/18/ngrok2/" title="ngrok搭建在docker环境">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
