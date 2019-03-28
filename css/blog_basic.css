@@ -44,6 +44,10 @@ pre {
   font-family: 'Roboto Mono','Lucida Console','Trebuchet MS','Courier New', Monaco, courier,'PingFang SC','Hiragino Sans GB','Microsoft Jhenghei','Microsoft YaHei', monospace!important
 }
 
+pre .line{
+  font-size: 10px;
+}
+
 figure.highlight {
   position: relative!important;
   margin: 1em 0!important;
