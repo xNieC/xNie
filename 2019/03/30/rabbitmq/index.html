@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="xNie,wydyylyc@gmail.com"><title>消息队列RabbitMQ · xNie's Blog</title><meta name="description" content="消息队列RabbitMQ
+RabbitMQ基于 ErLang 语言,开发具有高可用高并发的优点,适合集群服务器.它有消息确认机制和持久化机制，可靠性高.
+
+简介消息队列一般解决异步通信和服务间解耦的问题(通知短信,统计数据等),RabbitMQ为AMQP,使用ErLang语言编写.ErLang语言可"><meta name="keywords" content="[&quot;java&quot;,&quot;后端&quot;]"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/accimage.png" style="width:127px;"><h3 title><a href="/">xNie's Blog</a></h3><div class="description"><p>黑作坊</p></div></div></div><ul class="social-links"></ul><div class="footer"><span>主题由 </span><a href="https://www.caicai.me">CaiCai </a><span> 与 </span><a href="https://github.com/Ben02/hexo-theme-Anatole">Ben </a><span> 设计</span><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank"> 博客框架基于Hexo</a><br><a href="https://dev.tencent.com/" target="_blank"> 使用CODING持续集成</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/accimage.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>消息队列RabbitMQ</a></h3></div><div class="post-content"><h1 id="消息队列RabbitMQ"><a href="#消息队列RabbitMQ" class="headerlink" title="消息队列RabbitMQ"></a>消息队列RabbitMQ</h1><blockquote>
+<p>RabbitMQ基于 ErLang 语言,开发具有高可用高并发的优点,适合集群服务器.它有消息确认机制和持久化机制，可靠性高.</p>
+</blockquote>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>消息队列一般解决异步通信和服务间解耦的问题(通知短信,统计数据等),RabbitMQ为<code>AMQP</code>,使用<code>ErLang</code>语言编写.<code>ErLang</code>语言可以做到公平调度.</p>
+<h4 id="RabbitMQ的基本结构"><a href="#RabbitMQ的基本结构" class="headerlink" title="RabbitMQ的基本结构"></a>RabbitMQ的基本结构</h4><h5 id="消息生产者Producer"><a href="#消息生产者Producer" class="headerlink" title="消息生产者Producer"></a>消息生产者<code>Producer</code></h5><p>Put消息到队列中.</p>
+<h5 id="消息消费者Comsumer"><a href="#消息消费者Comsumer" class="headerlink" title="消息消费者Comsumer"></a>消息消费者<code>Comsumer</code></h5><p>采用订阅的方式获取消息.</p>
+<h4 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h4><p>消息队列提供FIFO(先进先出)的处理机制,队列可以设置为<code>持久化</code>,<code>临时</code>,和<code>自动删除</code></p>
+<ul>
+<li><p>持久化</p>
+<p>消息会在服务器本地硬盘存储,防止数据丢失</p>
+</li>
+<li><p>临时</p>
+<p>消息存储于内存,系统重启后会消失</p>
+</li>
+<li><p>自动删除</p>
+<p>当没有用户连接到服务器时,队列中的消息会被自动删除</p>
+</li>
+</ul>
+<h4 id="ExChange"><a href="#ExChange" class="headerlink" title="ExChange"></a>ExChange</h4><p>ExChange提供消息路由策略.在RabbitMQ中,生产者(Producer)会先把消息发送给ExChange.一个ExChange可以与多个Queue进行绑定,Exchange根据生产者(Produce)传来消息中的<code>routing_key</code>将消息传给指定的Queue,对于<code>routing_key</code>有特定的路由算法.Exchange也可以设置为<code>持久化</code>,<code>临时</code>和<code>自动删除</code>.</p>
+<h5 id="ExChange的类型"><a href="#ExChange的类型" class="headerlink" title="ExChange的类型"></a>ExChange的类型</h5><ul>
+<li><p><code>direct</code>(直接交换器)</p>
+<p>这是Exchange默认的交换模式,消息会被路由到与<code>routing_key</code>相同的Queue,即key就是Queue.</p>
+</li>
+<li><p><code>fanout</code>(广播式交换器)</p>
+<p>不检查<code>routing_key</code>,对绑定的Queue全部都发送一遍消息.</p>
+</li>
+<li><p><code>topic</code>(主题交换器)</p>
+<p>类似于组播方式,会将消息转发给与<code>routing_key</code>匹配的所有队列(模糊匹配),类似于搜索中的模糊匹配原则.例如,key为<code>user.msg</code>的消息会被<code>user.msg</code>,<code>*.msg</code>,<code>*.*</code>,<code>#.user.msg.#</code>的队列所匹配.</p>
+</li>
+<li><p><code>headers</code>(头部匹配交换器)</p>
+<p>通过查看消息的头部数据进行匹配(类似于http的header信息)</p>
+</li>
+</ul>
+<h4 id="Bindging"><a href="#Bindging" class="headerlink" title="Bindging"></a>Bindging</h4><p>将一个特定的 ExChange 和一个特定的 Queue 绑定起来。ExChange 和 Queue 的绑定可以是多对多的关系.</p>
+<h4 id="Virtual-Host-虚拟机"><a href="#Virtual-Host-虚拟机" class="headerlink" title="Virtual Host(虚拟机)"></a>Virtual Host(虚拟机)</h4><p>类似于Tomcat或Nginx,在 RabbitMQ Server 上可以创建多个虚拟的 Message Broker，又叫做 <code>Virtual Hosts</code>(vhosts)。每一个 vhost 本质上是一个 mini-rabbitmq server，分别管理各自的 ExChange，和 bindings。vhost 相当于物理的 Server，可以为不同 app 提供边界隔离，使得应用安全的运行在不同的 vhost 实例上，相互之间不会干扰。Producer 和 Consumer 连接 rabbit server 需要指定一个 vhost.</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2019-03-30</span><i class="fa fa-tag"></i><a class="tag" href="/tags/消息队列/" title="消息队列">消息队列 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.ixnie.cn/2019/03/30/rabbitmq/,xNie's Blog,消息队列RabbitMQ,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2019/03/29/redis/" title="redis集群模式(Redis Sentinel)">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script><script type="text/javascript" src="https://tajs.qq.com/stats?sId=66377481" charset="UTF-8"></script></body></html>
